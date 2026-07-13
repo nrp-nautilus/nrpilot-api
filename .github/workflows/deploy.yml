@@ -32,6 +32,12 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v6
 
+    - name: Normalize image repository name
+      shell: bash
+      run: |-
+        REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+        echo "IMAGE_NAME=$REPO_LOWER" >> "$GITHUB_ENV"
+
     - name: Resolve environment
       id: env
       run: |-

@@ -16,3 +16,17 @@ def test_health() -> None:
     request_id = response.headers["x-request-id"]
     assert len(request_id) == 36
     assert request_id.count("-") == 4
+
+
+def test_liveness() -> None:
+    response: Response = client.get("/live")
+
+    assert response.status_code == 200
+    assert response.json() == {"status": "alive"}
+
+
+def test_readiness() -> None:
+    response: Response = client.get("/ready")
+
+    assert response.status_code == 200
+    assert response.json() == {"status": "ready"}
