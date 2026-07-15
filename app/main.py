@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
+from app.api.health import router as health_router
 from app.config import setup_logging
 from app.core.logging import bind_context, clear_context, get_logger
 
@@ -66,8 +67,4 @@ async def logging_middleware(
         clear_context()
 
 
-@app.get("/health")
-async def health() -> dict[str, str]:
-    """Health check endpoint."""
-    logger.info("Method called: health_check")
-    return {"status": "ok"}
+app.include_router(health_router)
