@@ -2,7 +2,6 @@ from typing import Any
 
 from deepagents import create_deep_agent
 from langchain_openai import ChatOpenAI
-from pydantic import SecretStr
 
 from app.core.logging import get_logger
 from app.core.settings import Settings
@@ -32,12 +31,13 @@ class NRPilotAgent:
 
 
 def build_nrpilot_agent(service: KubernetesService, settings: Settings) -> NRPilotAgent:
-    if not settings.nrp_llm_token:
+    token = settings.nrp_llm_token.get_secret_value() if settings.nrp_llm_token else ""
+    if not token:
         raise RuntimeError("NRP_LLM_TOKEN must be configured to use nrpilot")
 
     model = ChatOpenAI(
         model=settings.model,
-        api_key=SecretStr(settings.nrp_llm_token),
+        api_key=settings.nrp_llm_token,
         base_url=settings.nrp_llm_base_url,
     )
     agent = create_deep_agent(
