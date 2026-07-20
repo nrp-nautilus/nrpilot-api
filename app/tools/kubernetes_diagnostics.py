@@ -63,6 +63,11 @@ def build_diagnostics_tools(service: KubernetesService) -> Sequence[BaseTool]:
     @tool
     def list_deployments(namespace: str) -> str:
         """List the deployments in a Kubernetes cluster."""
+        logger.info(
+            "kubernetes_tool_invoked",
+            tool="list_deployments",
+            namespace=namespace,
+        )
         return _as_json(service.list_deployments(namespace))
 
     return (
