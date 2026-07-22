@@ -9,6 +9,7 @@ from app.adapters.kubernetes.exceptions import (
 )
 from app.agents.nrpilot import NRPilotAgent
 from app.dependencies import get_nrpilot_agent
+from app.domain.documentation.exceptions import DocumentationUnavailableError
 from app.models.agents.nrpilot import ChatAnswer, ChatQuestion
 
 router = APIRouter(prefix="/api/v1", tags=["NRPilot Chat"])
@@ -34,4 +35,9 @@ def _run[T](operation: Callable[[], T]) -> T:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Kubernetes resource was not found",
+        ) from exc
+    except DocumentationUnavailableError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="NRP documentation is unavailable",
         ) from exc

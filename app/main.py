@@ -12,10 +12,11 @@ from app.api.health import router as health_router
 from app.api.v1.chat import router as chat_router
 from app.config import setup_logging
 from app.core.logging import bind_context, clear_context, get_logger
+from app.dependencies import get_settings
 
 load_dotenv()
 
-setup_logging()
+setup_logging(log_level=get_settings().log_level)
 logger = get_logger(__name__)
 
 
