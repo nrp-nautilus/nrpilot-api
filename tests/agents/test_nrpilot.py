@@ -5,6 +5,7 @@ from pydantic import SecretStr
 
 from app.agents.nrpilot import NRPilotAgent, build_nrpilot_agent
 from app.core.settings import Settings
+from app.services.documentation.service import DocumentationService
 from app.services.kubernetes.service import KubernetesService
 
 
@@ -31,10 +32,11 @@ def test_build_nrpilot_agent_raises_without_token() -> None:
         nrp_llm_base_url="http://localhost",
         model="qwen",
     )
-    service = Mock(spec=KubernetesService)
+    kubernetes_service = Mock(spec=KubernetesService)
+    documentation_service = Mock(spec=DocumentationService)
 
     with pytest.raises(RuntimeError, match="NRP_LLM_TOKEN"):
-        build_nrpilot_agent(service, settings)
+        build_nrpilot_agent(kubernetes_service, documentation_service, settings)
 
 
 def test_build_nrpilot_agent_constructs_chat_model_with_secret_token() -> None:
@@ -44,10 +46,11 @@ def test_build_nrpilot_agent_constructs_chat_model_with_secret_token() -> None:
         nrp_llm_base_url="http://localhost",
         model="qwen",
     )
-    service = Mock(spec=KubernetesService)
+    kubernetes_service = Mock(spec=KubernetesService)
+    documentation_service = Mock(spec=DocumentationService)
 
     with patch("app.agents.nrpilot.create_deep_agent") as mock_create:
-        build_nrpilot_agent(service, settings)
+        build_nrpilot_agent(kubernetes_service, documentation_service, settings)
 
     chat_model = mock_create.call_args.kwargs["model"]
     assert chat_model.model_name == "qwen"
